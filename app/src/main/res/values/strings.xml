@@ -1,0 +1,9 @@
+<resources>
+    <string name="app_name">Test Mirror 1</string>
+    <string name="po_cz">Połącz</string>
+    <string name="xvalp">---</string>
+    <string name="yvalp">---</string>
+    <string name="x">X =</string>
+    <string name="y">Y =</string>
+    <string name="sparowane">TextView</string>
+</resources>

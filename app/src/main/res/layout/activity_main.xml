@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/activity_main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingBottom="@dimen/activity_vertical_margin"
+    android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:paddingTop="@dimen/activity_vertical_margin"
+    tools:context="com.example.wojtek.testmirror1.MainActivity">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/x"
+        android:id="@+id/x" />
+
+    <TextView
+        android:text="@string/y"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/x"
+        android:layout_alignParentStart="true"
+        android:layout_marginTop="28dp"
+        android:id="@+id/y" />
+
+    <TextView
+        android:text="@string/xvalp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@+id/x"
+        android:layout_toEndOf="@+id/x"
+        android:layout_marginStart="20dp"
+        android:id="@+id/xval" />
+
+    <TextView
+        android:text="@string/yvalp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@+id/y"
+        android:layout_alignStart="@+id/xval"
+        android:id="@+id/yval" />
+
+    <Button
+        android:text="@string/po_cz"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/y"
+        android:layout_alignParentStart="true"
+        android:layout_marginTop="36dp"
+        android:id="@+id/connect" />
+
+    <TextView
+        android:text="TextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/textView2"
+        android:layout_marginTop="37dp"
+        android:textAppearance="@style/TextAppearance.AppCompat.Display1"
+        android:textSize="24sp"
+        android:layout_below="@+id/connect"
+        android:layout_alignParentStart="true" />
+
+    <TextView
+        android:text="MAC Adres:"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/textView3"
+        android:layout_below="@+id/connect"
+        android:layout_toEndOf="@+id/y"
+        android:layout_marginTop="11dp" />
+
+    <Button
+        android:text="Włącz"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignTop="@+id/connect"
+        android:layout_toEndOf="@+id/textView2"
+        android:layout_marginStart="79dp"
+        android:id="@+id/onoff" />
+</RelativeLayout>
