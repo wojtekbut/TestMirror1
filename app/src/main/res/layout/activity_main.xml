@@ -75,8 +75,26 @@
         android:text="Włącz"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignTop="@+id/connect"
-        android:layout_toEndOf="@+id/textView2"
-        android:layout_marginStart="79dp"
-        android:id="@+id/onoff" />
+        android:id="@+id/onoff"
+        android:layout_above="@+id/textView2"
+        android:layout_centerHorizontal="true" />
+
+    <Button
+        android:text="Połącz z\nArduino"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/textView2"
+        android:layout_toEndOf="@+id/connect"
+        android:layout_marginTop="37dp"
+        android:id="@+id/arduino" />
+
+    <ListView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:id="@+id/lista"
+        android:background="@android:color/darker_gray"
+        android:alpha="1"
+        android:forceHasOverlappingRendering="true" />
 </RelativeLayout>
