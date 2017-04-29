@@ -9,20 +9,29 @@ import android.os.Message;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import java.nio.charset.Charset;
+import java.util.ArrayList;
+import java.util.Arrays;
 
 public class MainActivity extends AppCompatActivity {
 
     Button connect;
     Button onoff;
+    Button arduino;
     Boolean on;
     TextView xval;
     TextView yval;
     TextView macadres;
+    ListView listaview;
+    ArrayList listaArray;
+    ArrayAdapter<String> arrayAdapter;
     BluetoothAdapter mBluetoothAdapter;
     BluetoothDevice device;
     String adresMac;
@@ -41,6 +50,9 @@ public class MainActivity extends AppCompatActivity {
         macadres.setText("Nie połączony.");
         connect = (Button) findViewById(R.id.connect);
         onoff = (Button) findViewById(R.id.onoff);
+        arduino = (Button) findViewById(R.id.arduino);
+        listaview = (ListView) findViewById(R.id.lista);
+        listaview.setVisibility(View.INVISIBLE);
         on = false;
         device = null;
         mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
@@ -51,7 +63,7 @@ public class MainActivity extends AppCompatActivity {
         }
         if (!mBluetoothAdapter.isEnabled()) {
             Intent enableIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
-            startActivityForResult(enableIntent, 3);
+            startActivity(enableIntent);
         }
 
 
@@ -72,27 +84,41 @@ public class MainActivity extends AppCompatActivity {
                     if (on) {
                         on = !on;
                         onoff.setText("Włącz");
-                        String msg = "off" + "\n";
-                        byte[] bytes = msg.getBytes(charset);
-                        polaczenie.write(bytes);
+                        String roz = "run:";
+                        String msg = "off";
+                        //byte[] bytes = msg.getBytes(charset);
+                        polaczenie.writes(roz, msg);
                     } else {
                         on = !on;
                         onoff.setText("Wyłącz");
-                        String msg = "on" + "\n";
+                        String roz = "run:";
+                        String msg = "on";
                         byte[] bytes = msg.getBytes(charset);
-                        polaczenie.write(bytes);
+                        polaczenie.writes(roz, msg);
                     }
 
                 }
             }
         });
 
+        arduino.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                if (polaczenie != null) {
+                    String roz = "lista:";
+                    String msg = "getBonded";
+                    polaczenie.writes(roz,msg);
+                }
+            }
+        });
+
         if (device != null) {
             Log.d("resume", "onResume: device" + device.toString());
-            if (polaczenie == null) {Log.d("resume", "onResume: polaczenie jest null");}
-            polaczenie = new ConnectThread(device,mHandler);
-            polaczenie.start();
-            macadres.setText(nazwa.concat(adresMac));
+            if (polaczenie == null) {
+                Log.d("resume", "onResume: polaczenie jest null");
+                polaczenie = new ConnectThread(device, mHandler);
+                polaczenie.start();
+                macadres.setText(nazwa.concat(adresMac));
+            }
         } else {
             Log.d("resume", "onResume: device = null" );
         }
@@ -137,10 +163,19 @@ public class MainActivity extends AppCompatActivity {
     Handler mHandler = new Handler() {
         @Override
         public void handleMessage(Message msg) {
-            text = msg.obj.toString();
-            Log.d("mhandler", "handleMessage: "+ text);
-            //Log.d("mhandler", "handleMessage(2,6): "+ text.substring(2,7));
-            if (text.substring(2,7).equals("- - -")) {
+            try {
+                Log.d("handle:", "lista: " + Arrays.toString((byte[]) msg.obj));
+                Log.d("handle:", "lista clas: " + msg.obj.getClass().getName());
+            } catch (Exception e) {
+                //e.printStackTrace();
+            }
+
+            if (msg.what != 5) {
+                text = msg.obj.toString();
+                Log.d("mhandler", "handleMessage: " + text);
+                Log.d("mhandler", "text.length()= " + text.length() + text);
+            }
+            if (text.length()==5 && text.equals("- - -")) {
                 on = false;
                 onoff.setText("Włącz");
             } else
@@ -154,6 +189,51 @@ public class MainActivity extends AppCompatActivity {
                     break;
                 case 2:
                     yval.setText(text);
+                    break;
+                case 5:
+                    //try {
+                        //String listaS = Arrays.toString((byte[]) msg.obj);
+                        //byte[] list = (byte[]) msg.obj;
+                        //Log.d("bonded:", "dlugosc listyS: " + listaS.length());
+                        //Log.d("bonded:", "listaS: " + listaS);
+                        //Log.d("bonded:", "listaS clasa: " + listaS.getClass().getName());
+
+                        //Log.d("bonded:", "dlugosc listy: " + list.length);
+                        //Log.d("bonded:", "lista: " + Arrays.toString(list));
+                        //Log.d("bonded:", "lista clasa: " + list.getClass().getName());
+
+                        //ByteArrayInputStream bais = new ByteArrayInputStream(list);
+
+                        //ObjectInputStream objectIn = new ObjectInputStream(bais);
+                                //new ByteArrayInputStream((byte[]) list));
+                        //listaArray = (ArrayList<String>) objectIn.readObject();
+                        listaArray = (ArrayList) msg.obj;
+                        arrayAdapter = new ArrayAdapter<String>(getApplicationContext(), R.layout.lista, listaArray);
+                        listaview.setAdapter(arrayAdapter);
+                        listaview.setVisibility(View.VISIBLE);
+                        listaview.bringToFront();
+                        onoff.setVisibility(View.INVISIBLE);
+                        arduino.setVisibility(View.INVISIBLE);
+                        connect.setVisibility(View.INVISIBLE);
+                        listaview.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                            @Override
+                            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                                String info = ((TextView) view).getText().toString();
+                                String address = info.substring(0,17);
+                                String name = info.substring(17);
+                                Log.d("onclicklista:", "adres: " + address + " nazwa: " + name);
+                                listaview.setVisibility(View.INVISIBLE);
+                                //listaview.bringToFront();
+                                onoff.setVisibility(View.VISIBLE);
+                                arduino.setVisibility(View.VISIBLE);
+                                connect.setVisibility(View.VISIBLE);
+                                polaczenie.writes("polArd", address);
+
+                            }
+                        });
+                    //} catch()  {
+                        //e.printStackTrace();
+
                     break;
             }
         }
